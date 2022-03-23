@@ -603,25 +603,6 @@ class Map extends Component {
     });
   }
 
-  getGroupToRegions() {
-    return new Promise((resolve, reject) => {
-      import("../rawdata/postcodeWithRegions.json")
-        .then((data) => {
-          if (data && data.default) {
-            const validatedData = data.default.filter((item) => {
-              return item.lat && item.lng;
-            });
-            resolve(validatedData);
-          } else {
-            resolve([]);
-          }
-        })
-        .catch((err) => {
-          reject(err);
-        });
-    });
-  }
-
   getE5Engineers() {
     return new Promise((resolve, reject) => {
       import("../rawdata/rejections.json")
@@ -636,44 +617,6 @@ class Map extends Component {
             });
             const validatedData = refinedData.filter((item) => {
               return !isNaN(Number(item.lat)) && !isNaN(Number(item.lng));
-            });
-            resolve(validatedData);
-          } else {
-            resolve([]);
-          }
-        })
-        .catch((err) => {
-          reject(err);
-        });
-    });
-  }
-
-  getBoilerJobs() {
-    return new Promise((resolve, reject) => {
-      import("../rawdata/boilerJobs.json")
-        .then((data) => {
-          if (data && data.default) {
-            const validatedData = data.default.filter((item) => {
-              return item.lat && item.lng;
-            });
-            resolve(validatedData);
-          } else {
-            resolve([]);
-          }
-        })
-        .catch((err) => {
-          reject(err);
-        });
-    });
-  }
-
-  getServiceJobs() {
-    return new Promise((resolve, reject) => {
-      import("../rawdata/serviceJobs.json")
-        .then((data) => {
-          if (data && data.default) {
-            const validatedData = data.default.filter((item) => {
-              return item.lat && item.lng;
             });
             resolve(validatedData);
           } else {
@@ -1070,31 +1013,7 @@ class Map extends Component {
                     ? this.renderE5EngineerCircles()
                     : this.removeE5EngineerCircles();
                   break;
-                case "serviceJobs":
-                  data.srcElement.checked
-                    ? this.renderServiceJobs()
-                    : this.removeServiceJobs();
-                  break;
-                case "serviceJobsHeatMap":
-                  data.srcElement.checked
-                    ? this.renderServiceJobsHeatMap()
-                    : this.removeServiceJobsHeatMap();
-                  break;
-                case "boilerJobs":
-                  data.srcElement.checked
-                    ? this.renderBoilerJobs()
-                    : this.removeBoilerJobs();
-                  break;
-                case "boilerJobsHeatMap":
-                  data.srcElement.checked
-                    ? this.renderBoilerJobsHeatMap()
-                    : this.removeBoilerJobsHeatMap();
-                  break;
-                case "geofenceControls":
-                  data.srcElement.checked
-                    ? this.showSideBar()
-                    : this.hideSideBar();
-                  break;
+
                 default:
                   break;
               }

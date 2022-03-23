@@ -2,8 +2,8 @@ export function configureFakeBackend() {
   let users = [
     {
       id: 1,
-      username: "vp",
-      password: "vptester",
+      username: "meerim",
+      password: "meerimTester",
       firstName: "Test",
       lastName: "User",
     },
@@ -54,7 +54,7 @@ export function configureFakeBackend() {
           if (
             opts.headers &&
             opts.headers.Authorization ===
-              `Basic ${window.btoa("meerim:meerimAccess123")}`
+              `Basic ${window.btoa("meerim:meerimTester")}`
           ) {
             resolve({
               ok: true,
