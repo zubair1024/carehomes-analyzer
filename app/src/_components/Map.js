@@ -685,6 +685,88 @@ class Map extends Component {
     }
   }
 
+  getAccepted() {
+    return new Promise((resolve, reject) => {
+      import("../rawdata/accepted.json")
+        .then((data) => {
+          if (data && data.default) {
+            const refinedData = data.default.map((item) => {
+              return {
+                postcode: item?.result?.postcode,
+                lat: item?.result?.latitude,
+                lng: item?.result?.longitude,
+              };
+            });
+            const validatedData = refinedData.filter((item) => {
+              return !isNaN(Number(item.lat)) && !isNaN(Number(item.lng));
+            });
+            resolve(validatedData);
+          } else {
+            resolve([]);
+          }
+        })
+        .catch((err) => {
+          reject(err);
+        });
+    });
+  }
+
+  async renderAccepted() {
+    const type = "accepted";
+    try {
+      const arrayContent = await this.getAccepted();
+      if (arrayContent && arrayContent.length) {
+        let markers = [];
+        arrayContent.forEach((item) => {
+          if (item.lat && item.lng) {
+            const marker = window.L.marker([item.lat, item.lng], {
+              icon: this.markerIcon(type),
+            }).addTo(this.mapElement);
+            marker.bindPopup(this.markerPopupContent(type, item));
+            markers.push(marker);
+          }
+        });
+        this.setState({
+          [type]: markers,
+        });
+      } else {
+        throw new Error(`No ${type} to be rendered`);
+      }
+    } catch (err) {
+      console.error(err);
+      alert(`Error while rendering ${type}`);
+    }
+  }
+
+  async renderAcceptedCircles() {
+    const type = "accepted";
+    try {
+      const arrayContent = await this.getAccepted();
+      if (arrayContent && arrayContent.length) {
+        let circles = [];
+        arrayContent.forEach((item) => {
+          if (item.lat && item.lng) {
+            let circle = window.L.circle([item.lat, item.lng], 1609.34, {
+              color: "purple",
+              opacity: 1,
+              fillColor: "purple",
+              fillOpacity: 1,
+            }).addTo(this.mapElement);
+            circles.push(circle);
+          }
+        });
+        this.setState({
+          [`${type}Circle`]: circles,
+        });
+      } else {
+        throw new Error(`No ${type} to be rendered`);
+      }
+    } catch (err) {
+      console.error(err);
+      alert(`Error while rendering ${type}`);
+    }
+  }
+
   async renderBoilerJobs() {
     const type = "boilerJob";
     try {
@@ -871,12 +953,12 @@ class Map extends Component {
         icon =
           "https://res.cloudinary.com/razrlab/image/upload/v1571935748/person-marker_wdvvbm.png";
         break;
-      case "serviceJob":
-        icon =
-          "https://res.cloudinary.com/razrlab/image/upload/v1571935748/service-marker_tzrx0s.png";
-        break;
+      // case "accepted":
+      //   icon =
+      //     "https://res.cloudinary.com/razrlab/image/upload/v1571935748/service-marker_tzrx0s.png";
+      //   break;
       case "lead":
-      case "boilerJob":
+      case "accepted":
         icon =
           "https://res.cloudinary.com/razrlab/image/upload/v1571935748/home-marker_sskts6.png";
         break;
@@ -914,6 +996,24 @@ class Map extends Component {
     let e5EngineerMarkers = this.state.e5Engineer;
     if (e5EngineerMarkers && e5EngineerMarkers.length) {
       e5EngineerMarkers.forEach((item) => {
+        this.mapElement.removeLayer(item);
+      });
+    }
+  }
+
+  removeAcceptedCircles() {
+    let circles = this.state.acceptedCircle;
+    if (circles && circles.length) {
+      circles.forEach((item) => {
+        this.mapElement.removeLayer(item);
+      });
+    }
+  }
+
+  removeAccepted() {
+    let acceptedMarkers = this.state.accepted;
+    if (acceptedMarkers && acceptedMarkers.length) {
+      acceptedMarkers.forEach((item) => {
         this.mapElement.removeLayer(item);
       });
     }
@@ -980,6 +1080,12 @@ class Map extends Component {
             <label><input type="checkbox" value="e5EngineerCircles">Rejection Boundaries</label>
           </div>
           <div class="checkbox">
+            <label><input type="checkbox" value="accepted">Accepted</label>
+          </div>
+          <div class="checkbox">
+            <label><input type="checkbox" value="acceptedCircles">Accepted Boundaries</label>
+          </div>
+          <div class="checkbox">
           <label><input type="checkbox" value="leadsHeatMap">Care Homes Heat Map</label>
           </div>
           <div class="checkbox">
@@ -1012,6 +1118,16 @@ class Map extends Component {
                   data.srcElement.checked
                     ? this.renderE5EngineerCircles()
                     : this.removeE5EngineerCircles();
+                  break;
+                case "accepted":
+                  data.srcElement.checked
+                    ? this.renderAccepted()
+                    : this.removeAccepted();
+                  break;
+                case "acceptedCircles":
+                  data.srcElement.checked
+                    ? this.renderAcceptedCircles()
+                    : this.removeAcceptedCircles();
                   break;
 
                 default:
