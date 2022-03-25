@@ -950,17 +950,17 @@ class Map extends Component {
     let icon = "";
     switch (type) {
       case "e5Engineer":
-        icon =
-          "https://res.cloudinary.com/razrlab/image/upload/v1571935748/person-marker_wdvvbm.png";
+        icon = "./rejection.png";
         break;
       // case "accepted":
       //   icon =
       //     "https://res.cloudinary.com/razrlab/image/upload/v1571935748/service-marker_tzrx0s.png";
       //   break;
       case "lead":
+        icon = "./homes.png";
+        break;
       case "accepted":
-        icon =
-          "https://res.cloudinary.com/razrlab/image/upload/v1571935748/home-marker_sskts6.png";
+        icon = "./accepted.png";
         break;
       default:
         //nothing
